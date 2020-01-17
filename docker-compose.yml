@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+    client:
+      container_name: client
+      restart: always
+      build: ./client
+      volumes:
+        - ./client:/client
+      ports:
+        - '3000:3000'
+    server:
+      container_name: server
+      restart: always
+      build: ./server
+      ports:
+        - '3001:3001'
+      volumes:
+        - ./server:/server
+      links:
+        - mongo
+    mongo:
+      container_name: mongo
+      image: mongo:latest
+      restart: always
+      ports:
+        - '27017:27017'
