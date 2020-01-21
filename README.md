@@ -37,7 +37,7 @@ Both client and server need to be installed before running in development mode
 
 #### ```yarn```
 #### ```yarn start```
-#### ```docker run -d -p 27017:27017 mongo```
+#### ```docker-compose -f .\docker-compose.dev.yml up -d```
 
 ## Architecture
 With the following requirements

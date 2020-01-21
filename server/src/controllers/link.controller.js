@@ -9,24 +9,22 @@ const shortenURL = async (req, res) => {
         if (!url || !url.length) {
             return res
                 .status(BAD_REQUEST)
-                .send({ 'message': 'Please provide a URL.' })
+                .send({ 'message': 'Please provide a URL.' });
         }
 
-        // Increment db count
-        let _id = 0;
-        Link.countDocuments().then(res => { _id = res });
+        let _id = 1;
+        const docCount = await Link.countDocuments();
+        _id = docCount;
 
-        console.log(`Encoding ${_id}`)
         const hashids = new Hashids(salt);
         const encodedID = hashids.encode(_id);
-        console.log(encodedID);
 
-        const shortURL = new Link({ _id, url: `http://localhost:3001/api/v1/${encodedID}` });
-        shortURL.save((err, shortURL) => {
-            if (err) { return console.error(err); }
+        const shortURL = new Link({ _id, url });
+        shortURL.save((err) => {
+            if (err) { throw Error(err) }
             return res
                 .status(OK)
-                .send(shortURL);
+                .send(`http://localhost:3001/api/v1/${encodedID}`);
         });
     }
     catch (err) {
@@ -43,7 +41,16 @@ const redirectToShortURL = (req, res) => {
         const id = hashids.decode(req.params.shortURL);
         // When decoding, output is always an array of numbers (even if you encode only one number)
         console.log(id);
-        res.redirect(TEMPORARY_REDIRECT, 'https://google.ca')
+        if (!id.length) {
+            return res
+            .status(INTERNAL_SERVER_ERROR)
+            .send({ 'message': 'URL not found in database.' });
+        }
+        Link.findOne({ _id: id }, (err, link) => {
+            if (err) { throw Error(err) }
+            console.log(link.url)
+            res.redirect(TEMPORARY_REDIRECT, link.url);
+        });
     }
     catch (err) {
         return res
