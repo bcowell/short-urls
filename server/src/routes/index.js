@@ -1,11 +1,10 @@
 import { Router } from 'express';
+import LinkRouter from './link.router';
 
 const router = Router();
 
-const dummyRouter = Router();
-
 const routes = [
-    dummyRouter
+    LinkRouter
 ];
 
 router.use('/v1', routes);

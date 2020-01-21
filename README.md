@@ -105,8 +105,8 @@ A collection use to store the URLs and their respective unique ID
 A collection to store the amount of URL redirects.
 ```
 {
-    "linkID": 1,
-    "clicks": 10
+    "_id": 1,
+    "count": 10
 }
 ```
 
