@@ -1,5 +1,6 @@
 import { OK, INTERNAL_SERVER_ERROR, TEMPORARY_REDIRECT, BAD_REQUEST } from 'http-status-codes';
 import Link from 'models/link.model';
+import Counter from 'models/click.model';
 import Hashids from 'hashids/cjs';
 import salt from 'constants/api';
 
@@ -20,12 +21,10 @@ const shortenURL = async (req, res) => {
         const encodedID = hashids.encode(_id);
 
         const shortURL = new Link({ _id, url });
-        shortURL.save((err) => {
-            if (err) { throw Error(err) }
-            return res
-                .status(OK)
-                .send(`http://localhost:3001/api/v1/${encodedID}`);
-        });
+        await shortURL.save();
+        return res
+            .status(OK)
+            .send(`http://localhost:3001/api/v1/${encodedID}`);
     }
     catch (err) {
         return res
@@ -34,23 +33,23 @@ const shortenURL = async (req, res) => {
     }
 }
 
-const redirectToShortURL = (req, res) => {
+const redirectToShortURL = async (req, res) => {
     try {
         const hashids = new Hashids(salt);
-        console.log(req.params.shortURL);
-        const id = hashids.decode(req.params.shortURL);
         // When decoding, output is always an array of numbers (even if you encode only one number)
-        console.log(id);
+        const id = hashids.decode(req.params.shortURL);
         if (!id.length) {
             return res
-            .status(INTERNAL_SERVER_ERROR)
-            .send({ 'message': 'URL not found in database.' });
+                .status(INTERNAL_SERVER_ERROR)
+                .send({ 'message': 'URL not found in database.' });
         }
-        Link.findOne({ _id: id }, (err, link) => {
-            if (err) { throw Error(err) }
-            console.log(link.url)
-            res.redirect(TEMPORARY_REDIRECT, link.url);
-        });
+        const link = await Link.findOne({ _id: id });
+        await Counter.findOneAndUpdate(
+            { '_id': id }, 
+            { '$inc': { count : 1 } },
+            { 'upsert': true }
+        ).exec();
+        return res.redirect(TEMPORARY_REDIRECT, link.url);
     }
     catch (err) {
         return res

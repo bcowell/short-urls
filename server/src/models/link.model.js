@@ -1,5 +1,4 @@
 import { Schema, model } from 'mongoose';
-import Counter from './click.model';
 
 const linkSchema = new Schema({
     _id: { type: Number },
