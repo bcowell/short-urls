@@ -5,6 +5,8 @@ const clickSchema = new Schema({
     count: { type: Number, default: 0 }
 });
 
-const Counter = model('Counter', clickSchema);
+let Counter;
+try { Counter = model('Counter', clickSchema) }
+catch (err) { Counter = model('Counter') }
 
 export default Counter;

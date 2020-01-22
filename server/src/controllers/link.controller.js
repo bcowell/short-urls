@@ -24,7 +24,7 @@ const shortenURL = async (req, res) => {
         await shortURL.save();
         return res
             .status(OK)
-            .send(`http://localhost:3001/api/v1/${encodedID}`);
+            .send(`/api/v1/${encodedID}`);
     }
     catch (err) {
         return res

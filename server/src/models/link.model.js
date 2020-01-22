@@ -6,6 +6,9 @@ const linkSchema = new Schema({
     createdAt: { type: Date, default: Date.now() }
 });
 
-const Link = model('Link', linkSchema);
+let Link; 
+try { Link = model('Link', linkSchema) }
+catch (err) { Link = model('Link') }
+
 
 export default Link;

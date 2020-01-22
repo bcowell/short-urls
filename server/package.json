@@ -10,7 +10,7 @@
     "start": "nodemon --exec babel-node src/server.js",
     "build": "babel src --out-dir build",
     "serve": "node build/server.js",
-    "test": "mocha --require @babel/register 'src/**/*.test.js' --recursive"
+    "test": "mocha --require @babel/register 'src/**/*.test.js' --exit"
   },
   "dependencies": {
     "@babel/runtime": "^7.2.0",
