@@ -1,2 +1,2 @@
-export const baseURL = '/api';
+export const baseUrl = '/api';
 export const salt = 'Brayden';

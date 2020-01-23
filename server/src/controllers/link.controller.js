@@ -4,13 +4,13 @@ import Counter from 'models/click.model';
 import Hashids from 'hashids/cjs';
 import salt from 'constants/api';
 
-const shortenURL = async (req, res) => {
+const shortenUrl = async (req, res) => {
     try {
         const { url } = req.body;
         if (!url || !url.length) {
             return res
                 .status(BAD_REQUEST)
-                .send({ 'message': 'Please provide a URL.' });
+                .send({ 'message': 'Please provide a url.' });
         }
 
         let _id = 1;
@@ -20,11 +20,11 @@ const shortenURL = async (req, res) => {
         const hashids = new Hashids(salt);
         const encodedID = hashids.encode(_id);
 
-        const shortURL = new Link({ _id, url });
-        await shortURL.save();
+        const shortUrl = new Link({ _id, url });
+        await shortUrl.save();
         return res
             .status(OK)
-            .send(`/api/v1/${encodedID}`);
+            .send(`${encodedID}`);
     }
     catch (err) {
         return res
@@ -33,15 +33,15 @@ const shortenURL = async (req, res) => {
     }
 }
 
-const redirectToShortURL = async (req, res) => {
+const redirectToShortUrl = async (req, res) => {
     try {
         const hashids = new Hashids(salt);
         // When decoding, output is always an array of numbers (even if you encode only one number)
-        const id = hashids.decode(req.params.shortURL);
+        const id = hashids.decode(req.params.shortUrl);
         if (!id.length) {
             return res
                 .status(INTERNAL_SERVER_ERROR)
-                .send({ 'message': 'URL not found in database.' });
+                .send({ 'message': 'Url not found in database.' });
         }
         const link = await Link.findOne({ _id: id });
         await Counter.findOneAndUpdate(
@@ -60,4 +60,4 @@ const redirectToShortURL = async (req, res) => {
 
 
 
-export { shortenURL, redirectToShortURL };
+export { shortenUrl, redirectToShortUrl };

@@ -4,33 +4,33 @@ import app from 'server';
 
 describe('Integration test', () => {
 
-    const longURL = 'https://github.com';
-    let shortURL = '';
+    const longUrl = 'https://github.com';
+    let shortUrl = '';
 
-    it('Shortens a URL', () => {
+    it('Shortens a Url', () => {
         return request(app)
             .post('/api/v1/shorten')
-            .send({ url: longURL })
+            .send({ url: longUrl })
             .set('Accept', 'application/json')
             .expect(OK)
             .expect((res) => {
                 res.text.includes('/api/v1/')
             })
             .then(res => {
-                shortURL = res.text;
+                shortUrl = res.text;
             })
     });
     
-    it('Redirects to the long URL', () => {
+    it('Redirects to the long Url', () => {
         return request(app)
-            .get(shortURL)
+            .get(`/api/v1/${shortUrl}`)
             .expect(TEMPORARY_REDIRECT)
-            .expect('Location', longURL)
+            .expect('Location', longUrl)
     });
 });
 
 describe('Error handling', () => {
-    it('Error on trying to redirect to bad short URL', () => {
+    it('Error on trying to redirect to bad short Url', () => {
         return request(app)
             .get('/api/v1/BRAYDEN')
             .expect(INTERNAL_SERVER_ERROR);

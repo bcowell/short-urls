@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import router from 'routes/index.js';
 import connectMongoDB from './config/db';
-import { baseURL } from 'constants/api';
+import { baseUrl } from 'constants/api';
 import { OK } from 'http-status-codes';
 
 const PORT = process.env.PORT || 3001;
@@ -15,8 +15,8 @@ app.use(express.urlencoded({ extended: true }));
 
 connectMongoDB();
 
-app.get(baseURL + '/health', (req, res) => res.status(OK).send('Healthy!'));
-app.use(baseURL, router);
+app.get(baseUrl + '/health', (req, res) => res.status(OK).send('Healthy!'));
+app.use(baseUrl, router);
 
 app.listen(PORT);
 console.log(`Running on localhost port ${PORT}`);
